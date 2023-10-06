@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
   Logger,
 } from '@nestjs/common';
 import { EmotionsService } from './emotions.service';
