@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import * as bcrypt from 'bcrypt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,7 +14,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 const mockUser = {
   id: 'mockuser-123',
   email: 'test@gmail.com',
-  password: bcrypt.hash('1234', 10),
+  password: '1234',
 };
 
 // 진짜 repository 대신 주입할 repository
@@ -37,8 +36,27 @@ describe('UsersService', () => {
     service = module.get<UsersService>(UsersService);
   });
 
-  it('새로운 유저를 생성합니다', () => {
-    const user = new CreateUserDto('test@gmail.com', '1234');
-    expect(service.create(user)).toBeDefined();
+  // user 관련 테스트
+  describe('create user', () => {
+    it('새로운 유저를 생성합니다', () => {
+      const user: CreateUserDto = {
+        email: 'test@gmail.com',
+        password: '1234',
+      };
+      expect(service.create(user)).toBeDefined();
+    });
+
+    it('중복된 email로 유저를 생성할 수 없습니다', async () => {
+      const existUser: CreateUserDto = {
+        email: 'test@gmail.com',
+        password: '1234',
+      };
+      const newUSer: CreateUserDto = {
+        email: existUser.email,
+        password: existUser.password,
+      };
+      expect(service.create(existUser)).resolves; // resolves, rejects -> promise 메서드를 테스트 하기 위한 수정자. 이 뒤로 mathcer(toThrowError 같은)를 연이어 사용할 수 있음
+      expect(service.create(newUSer)).rejects.toThrowError();
+    });
   });
 });
