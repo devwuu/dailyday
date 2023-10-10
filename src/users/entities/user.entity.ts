@@ -1,6 +1,6 @@
 import { Column, Entity } from 'typeorm';
 import { CommonEntity } from '../../common/entities/CommonEntity';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Exclude } from 'class-transformer';
 
 @Entity({
@@ -11,6 +11,10 @@ export class User extends CommonEntity {
   @IsNotEmpty()
   @Column({ unique: true, nullable: false })
   email: string;
+
+  @IsString()
+  @Column({ nullable: false, default: 'username' })
+  name?: string;
 
   @IsNotEmpty()
   @Exclude()
