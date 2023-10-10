@@ -11,6 +11,7 @@ import { Journal } from './journals/entities/journal.entity';
 import * as Joi from 'joi';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { User } from './users/entities/user.entity';
 
 const typeOrmOptions: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -21,7 +22,7 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     username: configService.get('POSTGRES_USER'),
     password: configService.get('POSTGRES_PASSWORD'),
     database: configService.get('POSTGRES_DB'),
-    entities: [Journal, Emotion],
+    entities: [Journal, Emotion, User],
     synchronize: true, // // shouldn't be used in production
     logging: true,
   }),
@@ -33,7 +34,10 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod').default('dev'),
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test')
+          .default('development')
+          .default('development'),
         POSTGRES_HOST: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
         POSTGRES_USER: Joi.string().required(),

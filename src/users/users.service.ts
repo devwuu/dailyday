@@ -5,12 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateUserPasswordDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { UserDto } from './dto/user.dto';
+import * as securityUtils from '../common/utils/security.utils';
 
 @Injectable()
 export class UsersService {
@@ -22,7 +22,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<null | string> {
     const { email, password, name } = createUserDto;
-    const parsedPassword = await bcrypt.hash(password, 10);
+    const parsedPassword = await securityUtils.encode(password);
     const isExist = await this.userRepository.exist({ where: { email } });
     if (isExist) throw new UnauthorizedException('already exist email');
     const saved = await this.userRepository.save({
@@ -37,7 +37,7 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: string): Promise<null | UserDto> {
+  async findOneById(id: string): Promise<null | UserDto> {
     const find = await this.userRepository.findOneBy({ id });
     if (!find) throw new NotFoundException('Not Exist member');
     return find;
@@ -48,12 +48,33 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
   ): Promise<null | string> {
     const find = await this.userRepository.findOneBy({ id });
-    if (!find) throw new NotFoundException('Not Exist member');
+    if (!find) throw new UnauthorizedException('Not Exist member');
     await this.userRepository.update({ id }, updateUserDto);
     return id;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async updatePassword(
+    id: string,
+    updateUserPasswordDto: UpdateUserPasswordDto,
+  ) {
+    const find = await this.userRepository.findOneBy({ id });
+    if (!find) throw new NotFoundException('Not Exist User');
+    const isMatched = await securityUtils.compare(
+      updateUserPasswordDto.oldPassword,
+      find.password,
+    );
+    if (!isMatched) throw new UnauthorizedException('Not exist User');
+    const parsedNewPassword = await securityUtils.encode(
+      updateUserPasswordDto.newPassword,
+    );
+    await this.userRepository.update({ id }, { password: parsedNewPassword });
+    return id;
+  }
+
+  async remove(id: string) {
+    const target = await this.userRepository.findOneBy({ id });
+    if (!target) throw new NotFoundException('Not Exist member');
+    await this.userRepository.softDelete({ id });
+    return id;
   }
 }

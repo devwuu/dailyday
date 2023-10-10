@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as process from 'process';
-import { HttpExceptionFilter } from './common/exceptions/HttpExceptionFilter';
+import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 import * as expressBasicAuth from 'express-basic-auth';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication, Logger } from '@nestjs/common';
+import { SuccessResponseInterceptor } from './common/interceptors/success-response.interceptor';
 
 class Application {
   private readonly server: INestApplication;
@@ -36,15 +37,11 @@ class Application {
   private addGlobalMiddleware() {
     this.setupBasicAuth();
     this.setupOpenAPI();
-  }
-
-  private addGlobalFilters() {
+    this.server.useGlobalInterceptors(new SuccessResponseInterceptor());
     this.server.useGlobalFilters(new HttpExceptionFilter());
   }
-
   async init() {
     this.addGlobalMiddleware();
-    this.addGlobalFilters();
     await this.server.listen(process.env.PORT);
   }
 }

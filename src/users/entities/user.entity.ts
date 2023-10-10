@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm';
-import { CommonEntity } from '../../common/entities/CommonEntity';
+import { CommonEntity } from '../../common/entities/common.entity';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Exclude } from 'class-transformer';
 

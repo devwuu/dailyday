@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Test, TestingModule } from "@nestjs/testing";
+import { UsersService } from "./users.service";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { User } from "./entities/user.entity";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto, UpdateUserPasswordDto } from "./dto/update-user.dto";
 
 /**
  * mock 객체를 사용하는 이유
@@ -54,6 +54,16 @@ class MockRepository {
     mockusers.forEach((target, index) => {
       if (target.id === c.id) {
         mockusers[index] = { ...target, ...u };
+      }
+    });
+    console.log(mockusers);
+    return c.id;
+  });
+
+  softDelete = jest.fn().mockImplementation((c) => {
+    mockusers.forEach((target, index) => {
+      if (target.id === c.id) {
+        mockusers.splice(index, 1);
       }
     });
     return c.id;
@@ -108,13 +118,13 @@ describe('UsersService', () => {
     });
 
     it('특정 유저 정보를 가져옵니다', async () => {
-      const find = await service.findOne('mockuser-123');
+      const find = await service.findOneById('mockuser-123');
       console.log('find', find);
       expect(find).toBeDefined();
     });
 
     it('등록되지 않은 특정 유저를 조회하면 error가 발생합니다', () => {
-      expect(service.findOne('mockuser')).resolves.toThrowError();
+      expect(service.findOneById('mockuser')).rejects.toThrowError();
     });
   });
 
@@ -122,9 +132,7 @@ describe('UsersService', () => {
   describe('update user', () => {
     it('유저 정보를 수정합니다', () => {
       const newInfo: UpdateUserDto = {
-        email: 'new@test.com',
-        name: 'test user',
-        password: '1234',
+        name: 'update user',
       };
       expect(service.update('mockuser-125', newInfo)).resolves.toBe(
         'mockuser-125',
@@ -133,14 +141,40 @@ describe('UsersService', () => {
 
     it('존재하지 않는 유저 정보를 수정할 시 에러가 발생합니다', () => {
       const newInfo: UpdateUserDto = {
-        email: 'new@test.com',
-        name: 'test user',
-        password: '1234',
+        name: 'update user',
       };
       expect(service.update('notexist', newInfo)).rejects.toThrowError();
+    });
+
+    it('유저 비밀번호를 수정합니다', () => {
+      const newInfo: UpdateUserPasswordDto = {
+        oldPassword: '1234',
+        newPassword: '5678',
+      };
+      expect(service.updatePassword('mockuser-125', newInfo)).resolves.toBe(
+        'mockuser-125',
+      );
+    });
+
+    it('유저 비밀번호가 일치하지 않으면 수정 시 에러가 발생합니다', () => {
+      const newInfo: UpdateUserPasswordDto = {
+        oldPassword: '5678',
+        newPassword: '0000',
+      };
+      expect(
+        service.updatePassword('mockuser-125', newInfo),
+      ).rejects.toThrowError();
     });
   });
 
   // 유저 삭제 테스트
-  describe('delete user', () => {});
+  describe('delete user', () => {
+    it('유저를 삭제합니다 (soft delete', () => {
+      expect(service.remove('mockuser-125')).resolves.toBe('mockuser-125');
+    });
+
+    it('등록되지 않은 유저를 삭제하려고 할 경우 에러가 발생합니다', () => {
+      expect(service.remove('notexsit')).rejects.toThrowError();
+    });
+  });
 });
