@@ -43,6 +43,8 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
+        SECRET_KEY: Joi.string().required(),
+        EXP: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRootAsync(typeOrmOptions),
