@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Emotion } from './entities/emotion.entity';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { EmotionDto } from './dto/emotion.dto';
 
 @Injectable()
 export class EmotionsService {
@@ -27,19 +28,32 @@ export class EmotionsService {
     return saved.id;
   }
 
-  findAll() {
-    return `This action returns all emotions`;
+  async findAll(userId: string): Promise<null | EmotionDto[]> {
+    const user = await this.userRepository.findOneBy({
+      id: userId,
+    });
+    if (!user) throw new NotFoundException('Not exist user');
+    const all = await this.emotionRepository.find({ where: { user } });
+    return all;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} emotion`;
+  async findOneById(id: string): Promise<null | EmotionDto> {
+    const find = await this.emotionRepository.findOneBy({ id });
+    if (!find) throw new NotFoundException('Not exist Emotion');
+    return find;
   }
 
-  update(id: number, updateEmotionDto: UpdateEmotionDto) {
-    return `This action updates a #${id} emotion`;
+  async update(id: string, updateEmotionDto: UpdateEmotionDto) {
+    const find = await this.emotionRepository.findOneBy({ id });
+    if (!find) throw new NotFoundException('Not exist emotion');
+    await this.emotionRepository.update(id, { ...find, ...updateEmotionDto });
+    return id;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} emotion`;
+  async remove(id: string) {
+    const find = await this.emotionRepository.findOneBy({ id });
+    if (!find) throw new NotFoundException('Not exist emotion');
+    await this.emotionRepository.softDelete(id);
+    return id;
   }
 }
