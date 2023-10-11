@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CommonEntity } from '../../common/entities/common.entity';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
@@ -25,9 +25,9 @@ export class Emotion extends CommonEntity {
     cascade: true,
     onDelete: 'SET NULL',
   })
-  @Column({
-    nullable: true,
+  @JoinColumn({
     name: 'user_id',
+    referencedColumnName: 'id',
   })
   user?: User;
 }

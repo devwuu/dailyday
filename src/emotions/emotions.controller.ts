@@ -19,7 +19,7 @@ export class EmotionsController {
   constructor(private readonly emotionsService: EmotionsService) {}
 
   // emotion 모든 api : (login) guard 필요!
-  private readonly userId: string = 'notexistuser'; // must be removed
+  private readonly userId: string = '94f3c50c-05e7-4b83-b311-1fb4cf84b3a1'; // must be removed
 
   @Post()
   create(@Body() createEmotionDto: CreateEmotionDto) {
