@@ -16,8 +16,8 @@ export class User extends CommonEntity {
   @Column({ nullable: false, default: 'username' })
   name?: string;
 
-  @IsNotEmpty()
   @Exclude()
+  @IsNotEmpty()
   @Column({ nullable: false })
   password: string;
 }

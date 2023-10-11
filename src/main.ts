@@ -1,10 +1,15 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as process from 'process';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 import * as expressBasicAuth from 'express-basic-auth';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { INestApplication, Logger } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  INestApplication,
+  Logger,
+  ValidationPipe,
+} from '@nestjs/common';
 import { SuccessResponseInterceptor } from './common/interceptors/success-response.interceptor';
 
 class Application {
@@ -37,6 +42,10 @@ class Application {
   private addGlobalMiddleware() {
     this.setupBasicAuth();
     this.setupOpenAPI();
+    this.server.useGlobalPipes(new ValidationPipe({ transform: true }));
+    this.server.useGlobalInterceptors(
+      new ClassSerializerInterceptor(this.server.get(Reflector)),
+    );
     this.server.useGlobalInterceptors(new SuccessResponseInterceptor());
     this.server.useGlobalFilters(new HttpExceptionFilter());
   }
