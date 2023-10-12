@@ -33,8 +33,8 @@ describe('EmotionsController', () => {
 
   it('/emotions (POST)', () => {
     const emotion: CreateEmotionDto = {
-      name: '사랑',
-      etc: '사랑하는 감정',
+      name: '희망',
+      etc: '미래 지향적 감정',
     };
     return request(app.getHttpServer())
       .post('/emotions')

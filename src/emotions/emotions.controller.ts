@@ -15,6 +15,8 @@ import { CreateEmotionDto } from './dto/create-emotion.dto';
 import { UpdateEmotionDto } from './dto/update-emotion.dto';
 import { OnlyPrivateInterceptor } from '../common/interceptors/only-private.interceptor';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { User } from '../common/decorators/user.decorator';
+import { UserDto } from '../users/dto/user.dto';
 
 @Controller('emotions')
 @UseGuards(JwtAuthGuard)
@@ -24,17 +26,14 @@ export class EmotionsController {
 
   constructor(private readonly emotionsService: EmotionsService) {}
 
-  // emotion 모든 api : (login) guard 필요!
-  private readonly userId: string = '075b9be6-6d99-4e08-942d-4e392fef80a7'; // must be removed
-
   @Post()
-  create(@Body() createEmotionDto: CreateEmotionDto) {
-    return this.emotionsService.create(this.userId, createEmotionDto);
+  create(@User() user: UserDto, @Body() createEmotionDto: CreateEmotionDto) {
+    return this.emotionsService.create(user.id, createEmotionDto);
   }
 
   @Get()
-  findAll() {
-    return this.emotionsService.findAll(this.userId);
+  findAll(@User() user: UserDto) {
+    return this.emotionsService.findAll(user.id);
   }
 
   @Get(':id')
