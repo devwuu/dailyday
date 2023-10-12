@@ -45,18 +45,37 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Life Cycle
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
+In general, the request lifecycle looks like the following:
+1. Incoming request
+2. Middleware
+   1. Globally bound middleware
+   2. Module bound middleware
+3. Guards
+   1. Global guards
+   2. Controller guards
+   3. Route guards
+4. Interceptors (pre-controller)
+   1. Global interceptors
+   2. Controller interceptors
+   3. Route interceptors
+5. Pipes
+   1. Global pipes
+   2. Controller pipes
+   3. Route pipes
+   4. Route parameter pipes
+6. Controller (method handler)
+7. Service (if exists)
+8. Interceptors (post-request)
+   1. Route interceptor
+   2. Controller interceptor
+   3. Global interceptor
+9. Exception filters
+   1. route
+   2. controller  
+   3. global  
+10. Server response
 
 ## Support
 
