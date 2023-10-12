@@ -7,19 +7,25 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EmotionsService } from './emotions.service';
 import { CreateEmotionDto } from './dto/create-emotion.dto';
 import { UpdateEmotionDto } from './dto/update-emotion.dto';
+import { OnlyPrivateInterceptor } from '../common/interceptors/only-private.interceptor';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @Controller('emotions')
+@UseGuards(JwtAuthGuard)
+@UseInterceptors(OnlyPrivateInterceptor)
 export class EmotionsController {
   private logger: Logger = new Logger(EmotionsController.name);
 
   constructor(private readonly emotionsService: EmotionsService) {}
 
   // emotion 모든 api : (login) guard 필요!
-  private readonly userId: string = '94f3c50c-05e7-4b83-b311-1fb4cf84b3a1'; // must be removed
+  private readonly userId: string = '075b9be6-6d99-4e08-942d-4e392fef80a7'; // must be removed
 
   @Post()
   create(@Body() createEmotionDto: CreateEmotionDto) {
