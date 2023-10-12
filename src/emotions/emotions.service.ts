@@ -33,7 +33,11 @@ export class EmotionsService {
       id: userId,
     });
     if (!user) throw new NotFoundException('Not exist user');
-    const all = await this.emotionRepository.find({ where: { user } });
+    const all = await this.emotionRepository
+      .createQueryBuilder('e')
+      .leftJoin('e.user', 'u') // schema 가 아니라 필드를 지정해줘야 ON절에 user id가 조건으로 걸린다
+      .where('u.id = :id', { id: userId })
+      .getMany();
     return all;
   }
 
