@@ -62,11 +62,23 @@ export class JournalsEmotionsService {
     return `This action returns a #${id} journalsEmotion`;
   }
 
-  update(id: number, updateJournalsEmotionDto: UpdateJournalsEmotionDto) {
-    return `This action updates a #${id} journalsEmotion`;
+  async update(id: string, updateJournalsEmotionDto: UpdateJournalsEmotionDto) {
+    const { emotionId, intensity } = updateJournalsEmotionDto;
+    const join = await this.joinRepository.findOneBy({ id });
+    if (!join) throw new NotFoundException('Not exist emotion-journal');
+    const emotion = await this.emotionRepository.findOneBy({
+      id: emotionId,
+    });
+    if (!emotion) throw new NotFoundException('Not exist emotion');
+    await this.joinRepository.update(id, { ...join, emotion, intensity });
+
+    return id;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} journalsEmotion`;
+  async remove(id: string) {
+    const isExist = await this.joinRepository.exist({ where: { id } });
+    if (!isExist) throw new NotFoundException('Not exist emotion-journal');
+    await this.joinRepository.delete(id);
+    return id;
   }
 }

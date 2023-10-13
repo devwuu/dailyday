@@ -5,6 +5,7 @@ import { Emotion } from '../emotions/entities/emotion.entity';
 import { Journal } from '../journals/entities/journal.entity';
 import { JournalsEmotion } from './entities/journals-emotion.entity';
 import { CreateJournalsEmotionDto } from './dto/create-journals-emotion.dto';
+import { UpdateJournalsEmotionDto } from './dto/update-journals-emotion.dto';
 
 const mockemotions = [
   {
@@ -68,8 +69,29 @@ class EmotionMockRepository {
 
 class JoinMockRepository {
   save = jest.fn().mockResolvedValue(mockejs[0]);
+
   exist = jest.fn().mockImplementation(({ where }) => {
-    return mockejs.find((js) => js.journalId === where.journal.id);
+    if (where.journal) {
+      return mockejs.find((js) => js.journalId === where.journal.id);
+    } else {
+      return mockejs.find((js) => js.id === where.id);
+    }
+  });
+
+  update = jest.fn().mockImplementation((id, update) => {
+    mockejs.forEach((ej, index) => {
+      if (ej.id === id) mockejs[index] = { ...ej, ...update };
+    });
+  });
+
+  findOneBy = jest
+    .fn()
+    .mockImplementation(({ id }) => mockejs.find((ej) => ej.id === id));
+
+  delete = jest.fn().mockImplementation((id) => {
+    mockejs.forEach((ej, index) => {
+      if (ej.id === id) mockejs.splice(index, 1);
+    });
   });
 }
 
@@ -137,6 +159,42 @@ describe('JournalsEmotionsService', () => {
         intensity: '10',
       };
       expect(service.create(ej)).rejects.toThrowError();
+    });
+  });
+
+  describe('update emotion-journal', () => {
+    it('일기에 등록된 감정을 수정합니다', () => {
+      const ej: UpdateJournalsEmotionDto = {
+        emotionId: 'mockemotion-124',
+        intensity: '8',
+      };
+      expect(service.update('mockjs-124', ej)).resolves.toEqual('mockjs-124');
+    });
+
+    it('등록되지 않은 일기-감장은 수정할 수 없습니다', () => {
+      const ej: UpdateJournalsEmotionDto = {
+        emotionId: 'mockemotion-124',
+        intensity: '8',
+      };
+      expect(service.update('notexistej', ej)).rejects.toThrowError();
+    });
+
+    it('등록되지 않은 감정으로 일기-감정을 수정할 수 없습니다.', () => {
+      const ej: UpdateJournalsEmotionDto = {
+        emotionId: 'notexistemotion',
+        intensity: '8',
+      };
+      expect(service.update('mockjs-124', ej)).rejects.toThrowError();
+    });
+  });
+
+  describe('delete emotion-journal', () => {
+    it('등록된 일기-감정을 삭제할 수 있습니다', () => {
+      expect(service.remove('mockjs-124')).resolves.toEqual('mockjs-124');
+    });
+
+    it('등록되지 않은 id로 일기-감정을 삭제할 수 없습니다', () => {
+      expect(service.remove('notexistej')).rejects.toThrowError();
     });
   });
 });

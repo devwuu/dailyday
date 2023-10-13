@@ -37,11 +37,11 @@ export class JournalsEmotionsController {
     @Param('id') id: string,
     @Body() updateJournalsEmotionDto: UpdateJournalsEmotionDto,
   ) {
-    return this.journalsEmotionsService.update(+id, updateJournalsEmotionDto);
+    return this.journalsEmotionsService.update(id, updateJournalsEmotionDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.journalsEmotionsService.remove(+id);
+    return this.journalsEmotionsService.remove(id);
   }
 }
