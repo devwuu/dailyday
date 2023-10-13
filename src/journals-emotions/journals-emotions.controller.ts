@@ -6,12 +6,18 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JournalsEmotionsService } from './journals-emotions.service';
 import { CreateJournalsEmotionDto } from './dto/create-journals-emotion.dto';
 import { UpdateJournalsEmotionDto } from './dto/update-journals-emotion.dto';
+import { JwtAuthGuard } from '../auth/jwt.guard';
+import { OnlyPrivateInterceptor } from '../common/interceptors/only-private.interceptor';
 
-@Controller('journals-emotions')
+@UseGuards(JwtAuthGuard)
+@UseInterceptors(OnlyPrivateInterceptor)
+@Controller('je')
 export class JournalsEmotionsController {
   constructor(
     private readonly journalsEmotionsService: JournalsEmotionsService,

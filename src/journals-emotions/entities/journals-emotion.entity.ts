@@ -1,5 +1,5 @@
 import { CommonEntity } from '../../common/entities/common.entity';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { Journal } from '../../journals/entities/journal.entity';
 import { Emotion } from '../../emotions/entities/emotion.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
@@ -25,7 +25,7 @@ export class JournalsEmotion extends CommonEntity {
   })
   journal: Journal;
 
-  @OneToOne(() => Emotion, (emotion: Emotion) => emotion.id, {
+  @ManyToOne(() => Emotion, (emotion: Emotion) => emotion.id, {
     cascade: true,
     onDelete: 'SET NULL',
   })

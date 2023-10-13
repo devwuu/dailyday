@@ -42,6 +42,8 @@ export class JournalsEmotionsService {
     if (!emotion || !journal)
       throw new NotFoundException('Not exist Emotion OR Journal');
 
+    // journal을 전체 비교해서 확인함. querybuilder로 대체 필요
+    //SELECT 1 AS "row_exists" FROM (SELECT 1 AS dummy_column) "dummy_table" WHERE EXISTS (SELECT 1 FROM "JOURNAL_EMOTION" "JournalsEmotion" LEFT JOIN "JOURNAL" "JournalsEmotion__JournalsEmotion_journal" ON "JournalsEmotion__JournalsEmotion_journal"."id"="JournalsEmotion"."journal_id" AND ("JournalsEmotion__JournalsEmotion_journal"."deletedAt" IS NULL) WHERE ( ("JournalsEmotion__JournalsEmotion_journal"."id" = $1 AND "JournalsEmotion__JournalsEmotion_journal"."createdAt" = $2 AND "JournalsEmotion__JournalsEmotion_journal"."updatedAt" = $3 AND "JournalsEmotion__JournalsEmotion_journal"."date" = $4 AND "JournalsEmotion__JournalsEmotion_journal"."content" = $5) ) AND ( "JournalsEmotion"."deletedAt" IS NULL )) LIMIT 1 -- PARAMETERS: ["6c937349-8508-41f1-8e5c-3253e7fa1676","2023-10-13T01:28:34.951Z","2023-10-13T01:28:34.951Z","2023-10-15T15:00:00.000Z","새로운 일기"]
     const isJoinedRowExist = await this.joinRepository.exist({
       where: {
         journal,
@@ -86,6 +88,7 @@ export class JournalsEmotionsService {
   async findOneByJournalIdWithAllContent(
     id: string,
   ): Promise<null | JournalEmotionDto> {
+    // 사용하지 않는 컬럼 SELECT (X)
     const journalsEmotion = await this.joinRepository
       .createQueryBuilder('ej')
       .leftJoinAndSelect('ej.journal', 'j')
