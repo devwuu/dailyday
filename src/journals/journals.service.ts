@@ -67,11 +67,18 @@ export class JournalsService {
     return journal;
   }
 
-  update(id: string, updateJournalDto: UpdateJournalDto) {
-    return `This action updates a #${id} journal`;
+  // journal-emotion 테이블에서 emotion 수정 필요
+  async update(id: string, updateJournalDto: UpdateJournalDto) {
+    const journal = await this.journalRepository.findOneBy({ id });
+    if (!journal) throw new NotFoundException('Not exist journal');
+    await this.journalRepository.update({ id }, updateJournalDto);
+    return id;
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} journal`;
+  async remove(id: string) {
+    const isExist = await this.journalRepository.exist({ where: { id } });
+    if (!isExist) throw new NotFoundException('Not exist journal');
+    await this.journalRepository.softDelete(id);
+    return id;
   }
 }

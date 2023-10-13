@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Journal } from './entities/journal.entity';
 import { CreateJournalDto } from './dto/create-journal.dto';
 import { User } from '../users/entities/user.entity';
+import { UpdateJournalDto } from './dto/update-journal.dto';
 
 const mockuser = [
   {
@@ -50,7 +51,16 @@ class MockJournalRepository {
       return mockJournals.find((j) => j.id === c.id);
     }
   });
-  exist = jest.fn().mockResolvedValue(true);
+  exist = jest
+    .fn()
+    .mockImplementation((c) => mockJournals.find((j) => j.id === c.where.id));
+  softDelete = jest.fn().mockImplementation((id) => {
+    mockJournals.forEach((j, index) => {
+      if (j.id === id) mockJournals.splice(index, 1);
+    });
+    console.log(mockJournals);
+    return id;
+  });
   createQueryBuilder = jest.fn(() => ({
     condition: '',
     leftJoin() {
@@ -70,6 +80,12 @@ class MockJournalRepository {
       return mockJournals;
     },
   }));
+  update = jest.fn().mockImplementation((c, dto) => {
+    mockJournals.forEach((j, index) => {
+      if (j.id === c.id) mockJournals[index] = { ...j, ...dto };
+    });
+    return c.id;
+  });
 }
 
 describe('JournalsService', () => {
@@ -147,6 +163,32 @@ describe('JournalsService', () => {
 
     it('등록되지 않은 유저로 일기를 조회할 수 없습니다', () => {
       expect(service.findAll('notexistuser')).rejects.toThrowError();
+    });
+  });
+
+  describe('update journal', () => {
+    it('등록된 일기 내용으르 수정합니다', () => {
+      const journal: UpdateJournalDto = {
+        content: 'updated',
+      };
+      expect(service.update('mockjournal-124', journal)).resolves.toBeDefined();
+    });
+    it('등록되지 않은 일기 id로 일기를 수정하려고 할 경우 에러가 발생합니다', () => {
+      const journal: UpdateJournalDto = {
+        content: 'updated',
+      };
+      expect(service.update('notexistjournal', journal)).rejects.toThrowError();
+    });
+  });
+
+  describe('delete journal', () => {
+    it('등록된 일기 id로 일기를 삭제할 수 있습니다', () => {
+      expect(service.remove('mockjournal-123')).resolves.toEqual(
+        'mockjournal-123',
+      );
+    });
+    it('등록된 일기 id가 없을 경우, 일기를 삭제시 에러가 발생합니다', () => {
+      expect(service.remove('notexistjournal')).rejects.toThrowError();
     });
   });
 });
