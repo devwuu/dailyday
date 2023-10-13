@@ -13,7 +13,7 @@ export class Journal extends CommonEntity {
     nullable: false,
     type: 'timestamp with time zone',
   })
-  date: Date; // 시간은 utc
+  date: Date; // 일기의 날짜(작성일X), 시간은 utc
 
   @IsNotEmpty()
   @IsString()
@@ -21,17 +21,6 @@ export class Journal extends CommonEntity {
     nullable: false,
   })
   content: string;
-
-  // 다대다 관계로 확장 고려
-  // @OneToOne(() => Emotion, (emotion) => emotion.id, {
-  //   cascade: true,
-  //   onDelete: 'SET NULL',
-  // })
-  // @JoinColumn({
-  //   name: 'emotion_id',
-  //   referencedColumnName: 'id',
-  // })
-  // emotion: Emotion;
 
   @ManyToOne(() => User, (user) => user.id, {
     cascade: true,

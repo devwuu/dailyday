@@ -12,6 +12,7 @@ import * as Joi from 'joi';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from './users/entities/user.entity';
+import { JournalsEmotionsModule } from './journals-emotions/journals-emotions.module';
 
 const typeOrmOptions: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -52,6 +53,7 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     UsersModule,
     JournalsModule,
     EmotionsModule,
+    JournalsEmotionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
