@@ -1,5 +1,5 @@
 import { CommonEntity } from '../../common/entities/common.entity';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 
@@ -11,8 +11,9 @@ export class Journal extends CommonEntity {
   @Column({
     unique: true,
     nullable: false,
+    type: 'timestamp with time zone',
   })
-  date: Date;
+  date: Date; // 시간은 utc
 
   @IsNotEmpty()
   @IsString()
@@ -32,7 +33,7 @@ export class Journal extends CommonEntity {
   // })
   // emotion: Emotion;
 
-  @OneToOne(() => User, (user) => user.id, {
+  @ManyToOne(() => User, (user) => user.id, {
     cascade: true,
     onDelete: 'SET NULL',
   })
