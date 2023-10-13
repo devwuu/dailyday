@@ -22,14 +22,9 @@ export class JournalsEmotionsController {
     return this.journalsEmotionsService.create(createJournalsEmotionDto);
   }
 
-  @Get()
-  findAll() {
-    return this.journalsEmotionsService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.journalsEmotionsService.findOne(+id);
+    return this.journalsEmotionsService.findOneByJournalIdWithAllContent(id);
   }
 
   @Patch(':id')

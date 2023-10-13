@@ -21,7 +21,13 @@ export class JournalsService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(userId: string, createJournalDto: CreateJournalDto) {
+  /**
+   * todo journal-emotion 테이블에서 emotion 등록 필요
+   * */
+  async create(
+    userId: string,
+    createJournalDto: CreateJournalDto,
+  ): Promise<null | string> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new UnauthorizedException('Not exist user');
     const journal = await this.journalRepository.exist({
@@ -67,15 +73,20 @@ export class JournalsService {
     return journal;
   }
 
-  // journal-emotion 테이블에서 emotion 수정 필요
-  async update(id: string, updateJournalDto: UpdateJournalDto) {
+  /**
+   * todo journal-emotion 테이블에서 emotion 수정 필요
+   * */
+  async update(
+    id: string,
+    updateJournalDto: UpdateJournalDto,
+  ): Promise<null | string> {
     const journal = await this.journalRepository.findOneBy({ id });
     if (!journal) throw new NotFoundException('Not exist journal');
     await this.journalRepository.update({ id }, updateJournalDto);
     return id;
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<null | string> {
     const isExist = await this.journalRepository.exist({ where: { id } });
     if (!isExist) throw new NotFoundException('Not exist journal');
     await this.journalRepository.softDelete(id);

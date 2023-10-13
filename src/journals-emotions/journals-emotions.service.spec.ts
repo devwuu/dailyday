@@ -6,6 +6,7 @@ import { Journal } from '../journals/entities/journal.entity';
 import { JournalsEmotion } from './entities/journals-emotion.entity';
 import { CreateJournalsEmotionDto } from './dto/create-journals-emotion.dto';
 import { UpdateJournalsEmotionDto } from './dto/update-journals-emotion.dto';
+import { NotFoundException } from '@nestjs/common';
 
 const mockemotions = [
   {
@@ -93,6 +94,34 @@ class JoinMockRepository {
       if (ej.id === id) mockejs.splice(index, 1);
     });
   });
+
+  createQueryBuilder = jest.fn(() => ({
+    id: '',
+
+    leftJoinAndSelect() {
+      return this;
+    },
+    where(query, { id }) {
+      if (id === 'mockjs-123') this.id = id;
+      return this;
+    },
+    getOne() {
+      if (!this.id) throw new NotFoundException('Not Exist Journal-Emotion');
+      return {
+        id: 'mockjs-123',
+        emotion: {
+          id: 'mockemotion-124',
+          name: '희망',
+        },
+        journal: {
+          id: 'mockjournal-123',
+          content: '새로운 일기',
+          date: '2023-10-15T15:00:00.000Z',
+        },
+        intensity: '10',
+      };
+    },
+  }));
 }
 
 describe('JournalsEmotionsService', () => {
@@ -195,6 +224,20 @@ describe('JournalsEmotionsService', () => {
 
     it('등록되지 않은 id로 일기-감정을 삭제할 수 없습니다', () => {
       expect(service.remove('notexistej')).rejects.toThrowError();
+    });
+  });
+
+  describe('find emotion-journal', () => {
+    it('일기 id로 일기 정보, 감정 정보를 조회할 수 있습니다', () => {
+      expect(
+        service.findOneByJournalIdWithAllContent('mockjs-123'),
+      ).resolves.toBeDefined();
+    });
+
+    it('일기 또는 감정이 등록되지 않은 상태에서 일기 정보, 감정 정보를 조회할 수 없습니다', () => {
+      expect(
+        service.findOneByJournalIdWithAllContent('notexist'),
+      ).rejects.toThrowError();
     });
   });
 });

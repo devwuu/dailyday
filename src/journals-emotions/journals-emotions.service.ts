@@ -10,6 +10,7 @@ import { JournalsEmotion } from './entities/journals-emotion.entity';
 import { Repository } from 'typeorm';
 import { Journal } from '../journals/entities/journal.entity';
 import { Emotion } from '../emotions/entities/emotion.entity';
+import { JournalEmotionDto } from './dto/journal-emotion.dto';
 
 @Injectable()
 export class JournalsEmotionsService {
@@ -24,7 +25,12 @@ export class JournalsEmotionsService {
     private readonly emotionRepository: Repository<Emotion>,
   ) {}
 
-  async create(createJournalsEmotionDto: CreateJournalsEmotionDto) {
+  /**
+   * todo 전체적으로 쿼리 최적화 필요
+   * */
+  async create(
+    createJournalsEmotionDto: CreateJournalsEmotionDto,
+  ): Promise<null | string> {
     const { emotionId, journalId, intensity } = createJournalsEmotionDto;
     const emotion = await this.emotionRepository.findOneBy({
       id: emotionId,
@@ -54,15 +60,10 @@ export class JournalsEmotionsService {
     return saved.id;
   }
 
-  findAll() {
-    return `This action returns all journalsEmotions`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} journalsEmotion`;
-  }
-
-  async update(id: string, updateJournalsEmotionDto: UpdateJournalsEmotionDto) {
+  async update(
+    id: string,
+    updateJournalsEmotionDto: UpdateJournalsEmotionDto,
+  ): Promise<null | string> {
     const { emotionId, intensity } = updateJournalsEmotionDto;
     const join = await this.joinRepository.findOneBy({ id });
     if (!join) throw new NotFoundException('Not exist emotion-journal');
@@ -75,10 +76,34 @@ export class JournalsEmotionsService {
     return id;
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<null | string> {
     const isExist = await this.joinRepository.exist({ where: { id } });
     if (!isExist) throw new NotFoundException('Not exist emotion-journal');
     await this.joinRepository.delete(id);
     return id;
+  }
+
+  async findOneByJournalIdWithAllContent(
+    id: string,
+  ): Promise<null | JournalEmotionDto> {
+    const journalsEmotion = await this.joinRepository
+      .createQueryBuilder('ej')
+      .leftJoinAndSelect('ej.journal', 'j')
+      .leftJoinAndSelect('ej.emotion', 'e')
+      .where('j.id = :id', { id })
+      .getOne();
+
+    if (!journalsEmotion)
+      throw new NotFoundException('Not Exist Journal-Emotion');
+
+    return {
+      id: journalsEmotion.id,
+      emotionId: journalsEmotion.emotion.id,
+      journalId: journalsEmotion.journal.id,
+      emotionName: journalsEmotion.emotion.name,
+      journalContent: journalsEmotion.journal.content,
+      journalDate: journalsEmotion.journal.date,
+      intensity: journalsEmotion.intensity,
+    };
   }
 }

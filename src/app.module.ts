@@ -13,6 +13,7 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from './users/entities/user.entity';
 import { JournalsEmotionsModule } from './journals-emotions/journals-emotions.module';
+import { JournalsEmotion } from './journals-emotions/entities/journals-emotion.entity';
 
 const typeOrmOptions: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -23,7 +24,7 @@ const typeOrmOptions: TypeOrmModuleAsyncOptions = {
     username: configService.get('POSTGRES_USER'),
     password: configService.get('POSTGRES_PASSWORD'),
     database: configService.get('POSTGRES_DB'),
-    entities: [Journal, Emotion, User],
+    entities: [Journal, Emotion, User, JournalsEmotion],
     synchronize: true, // // shouldn't be used in production
     logging: true,
   }),
