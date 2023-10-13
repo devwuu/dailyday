@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateJournalsEmotionDto } from './dto/create-journals-emotion.dto';
 import { UpdateJournalsEmotionDto } from './dto/update-journals-emotion.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -31,6 +35,15 @@ export class JournalsEmotionsService {
 
     if (!emotion || !journal)
       throw new NotFoundException('Not exist Emotion OR Journal');
+
+    const isJoinedRowExist = await this.joinRepository.exist({
+      where: {
+        journal,
+      },
+    });
+
+    if (isJoinedRowExist)
+      throw new BadRequestException('emotion is already registered');
 
     const saved = await this.joinRepository.save({
       intensity,
