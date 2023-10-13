@@ -33,9 +33,9 @@ export class JournalsController {
     return this.journalsService.findAll(user.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.journalsService.findOneById(id);
+  @Get(':date')
+  findOneByDate(@User() user: UserDto, @Param('date') date: Date) {
+    return this.journalsService.findOneByDate(user.id, date);
   }
 
   @Patch(':id')
@@ -47,4 +47,10 @@ export class JournalsController {
   remove(@Param('id') id: string) {
     return this.journalsService.remove(id);
   }
+
+  // 삭제 고려
+  // @Get(':id')
+  // findOneById(@Param('id') id: string) {
+  //   return this.journalsService.findOneById(id);
+  // }
 }

@@ -61,7 +61,7 @@ export class JournalsService {
       .createQueryBuilder('j')
       .leftJoin('j.user', 'u')
       .where('u.id = :id', { id: userId })
-      .andWhere('j.date = :date', date)
+      .andWhere('j.date = :date', { date })
       .getOne();
     if (!journal) throw new NotFoundException('Not exist journal');
     return journal;
