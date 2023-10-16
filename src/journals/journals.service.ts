@@ -80,17 +80,19 @@ export class JournalsService {
     return journal;
   }
 
-  /**
-   * todo journal-emotion 테이블에서 emotion 수정 필요
-   * */
   async update(
     id: string,
     updateJournalDto: UpdateJournalDto,
   ): Promise<null | string> {
+    const { emotionJournalId, intensity, emotionId } = updateJournalDto;
     const journal = await this.journalRepository.findOneBy({ id });
     if (!journal) throw new NotFoundException('Not exist journal');
     await this.journalRepository.update({ id }, updateJournalDto);
-    return id;
+    const joinId = await this.joinService.update(emotionJournalId, {
+      intensity,
+      emotionId,
+    });
+    return joinId;
   }
 
   async remove(id: string): Promise<null | string> {

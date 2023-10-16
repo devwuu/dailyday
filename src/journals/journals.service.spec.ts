@@ -93,6 +93,7 @@ class MockJournalRepository {
 
 class MockJoinService {
   create = jest.fn().mockResolvedValue('mockej-123');
+  update = jest.fn().mockResolvedValue('mockej-123');
 }
 
 describe('JournalsService', () => {
@@ -186,6 +187,9 @@ describe('JournalsService', () => {
   describe('update journal', () => {
     it('등록된 일기 내용으르 수정합니다', () => {
       const journal: UpdateJournalDto = {
+        emotionJournalId: '',
+        intensity: '',
+        emotionId: '',
         content: 'updated',
       };
       expect(service.update('mockjournal-124', journal)).resolves.toBeDefined();
@@ -193,6 +197,9 @@ describe('JournalsService', () => {
     it('등록되지 않은 일기 id로 일기를 수정하려고 할 경우 에러가 발생합니다', () => {
       const journal: UpdateJournalDto = {
         content: 'updated',
+        emotionJournalId: '',
+        intensity: '',
+        emotionId: '',
       };
       expect(service.update('notexistjournal', journal)).rejects.toThrowError();
     });
