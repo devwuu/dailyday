@@ -5,9 +5,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class CommonEntity {
+  @ApiProperty({
+    description: 'id',
+    example: '075b9be6-6d99-4e08-942d-4e392fef80a7',
+  })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

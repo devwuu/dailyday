@@ -16,6 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { User } from '../common/decorators/user.decorator';
 import { UserDto } from './dto/user.dto';
 import { OnlyPrivateInterceptor } from '../common/interceptors/only-private.interceptor';
+import { ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -23,11 +24,40 @@ export class UsersController {
 
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiOperation({
+    summary: '회원가입',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '회원가입 성공',
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          description: '생성된 user Id',
+          example: '075b9be6-6d99-4e08-942d-4e392fef80a7',
+        },
+      },
+    },
+  })
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const userId = await this.usersService.create(createUserDto);
+    return { userId };
   }
 
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'jwt token',
+    required: true,
+  })
+  @ApiOperation({
+    summary: '회원정보 조회',
+  })
+  @ApiResponse({
+    status: 200,
+    type: UserDto,
+  })
   @UseInterceptors(OnlyPrivateInterceptor)
   @UseGuards(JwtAuthGuard)
   @Get('info')
@@ -35,16 +65,62 @@ export class UsersController {
     return user;
   }
 
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'jwt token',
+    required: true,
+  })
+  @ApiOperation({
+    summary: '비밀번호 변경',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '비밀번호 변경 성공',
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          description: 'user Id',
+          example: '075b9be6-6d99-4e08-942d-4e392fef80a7',
+        },
+      },
+    },
+  })
   @UseInterceptors(OnlyPrivateInterceptor)
   @UseGuards(JwtAuthGuard)
   @Patch('password')
-  updatePassword(
+  async updatePassword(
     @User() user: UserDto,
     @Body() updateUserPasswordDto: UpdateUserPasswordDto,
   ) {
-    return this.usersService.updatePassword(user.id, updateUserPasswordDto);
+    const userId = await this.usersService.updatePassword(
+      user.id,
+      updateUserPasswordDto,
+    );
+    return { userId };
   }
 
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'jwt token',
+    required: true,
+  })
+  @ApiOperation({
+    summary: '회원탈퇴',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '탈퇴 성공',
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          description: 'user Id',
+          example: '075b9be6-6d99-4e08-942d-4e392fef80a7',
+        },
+      },
+    },
+  })
   @UseInterceptors(OnlyPrivateInterceptor)
   @UseGuards(JwtAuthGuard)
   @Delete('')
@@ -52,6 +128,27 @@ export class UsersController {
     return this.usersService.remove(user.id);
   }
 
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'jwt token',
+    required: true,
+  })
+  @ApiOperation({
+    summary: '회원정보 수정',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원정보 변경 성공',
+    schema: {
+      properties: {
+        userId: {
+          type: 'string',
+          description: 'user Id',
+          example: '075b9be6-6d99-4e08-942d-4e392fef80a7',
+        },
+      },
+    },
+  })
   @UseInterceptors(OnlyPrivateInterceptor)
   @UseGuards(JwtAuthGuard)
   @Patch('')
