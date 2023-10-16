@@ -41,13 +41,13 @@ export class JournalsService {
       user,
     });
 
-    const joinId = await this.joinService.create({
+    await this.joinService.create({
       intensity,
       emotionId,
       journal,
     });
 
-    return joinId;
+    return journal.id;
   }
 
   async findAll(userId: string): Promise<null | JournalDto[]> {
@@ -84,21 +84,23 @@ export class JournalsService {
     id: string,
     updateJournalDto: UpdateJournalDto,
   ): Promise<null | string> {
-    const { emotionJournalId, intensity, emotionId } = updateJournalDto;
+    const { emotionJournalId, intensity, emotionId, content } =
+      updateJournalDto;
     const journal = await this.journalRepository.findOneBy({ id });
     if (!journal) throw new NotFoundException('Not exist journal');
-    await this.journalRepository.update({ id }, updateJournalDto);
-    const joinId = await this.joinService.update(emotionJournalId, {
+    await this.journalRepository.update({ id }, { content });
+    await this.joinService.update(emotionJournalId, {
       intensity,
       emotionId,
     });
-    return joinId;
+    return id;
   }
 
   async remove(id: string): Promise<null | string> {
     const isExist = await this.journalRepository.exist({ where: { id } });
     if (!isExist) throw new NotFoundException('Not exist journal');
     await this.journalRepository.softDelete(id);
+    await this.joinService.removeByJournalId(id);
     return id;
   }
 }

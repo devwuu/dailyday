@@ -9,5 +9,6 @@ import { EmotionsModule } from '../emotions/emotions.module';
   imports: [TypeOrmModule.forFeature([JournalsEmotion]), EmotionsModule],
   controllers: [JournalsEmotionsController],
   providers: [JournalsEmotionsService],
+  exports: [JournalsEmotionsService],
 })
 export class JournalsEmotionsModule {}

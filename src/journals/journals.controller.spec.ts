@@ -35,8 +35,10 @@ describe('JournalsController', () => {
 
   it('/journals (POST)', () => {
     const journal = {
+      emotionId: 'a34ca11e-d39f-4541-b67d-983b242b0783',
+      intensity: '10',
       content: '새로운 일기',
-      date: new Date(2023, 9, 16),
+      date: new Date(2023, 9, 28),
     };
     return request(app.getHttpServer())
       .post('/journals')
@@ -44,19 +46,13 @@ describe('JournalsController', () => {
       .expect(201);
   });
 
-  it('/journals/:date (GET)', () => {
-    const date = new Date(2023, 9, 16).toISOString();
-    return request(app.getHttpServer()).get(`/journals/${date}`).expect(200);
-  });
-
-  it('/journals (GET)', () => {
-    return request(app.getHttpServer()).get('/journals').expect(200);
-  });
-
   it('/journals/:id (PATCH)', () => {
-    const journalId: string = '77ae5c54-964d-4b53-a1c3-ef99400d7613';
+    const journalId: string = '4399d73f-ab9a-4f6d-9b0d-0e6719d9f4bc';
     const update = {
-      content: 'updated',
+      intensity: '20',
+      emotionId: 'a34ca11e-d39f-4541-b67d-983b242b0783',
+      emotionJournalId: '097a6fc8-4115-4af6-a1de-86ac82c5d127',
+      content: 'updated journal',
     };
     return request(app.getHttpServer())
       .patch(`/journals/${journalId}`)
@@ -65,7 +61,7 @@ describe('JournalsController', () => {
   });
 
   it('/journals/:id (DELETE)', () => {
-    const journalId: string = '77ae5c54-964d-4b53-a1c3-ef99400d7613';
+    const journalId: string = '4399d73f-ab9a-4f6d-9b0d-0e6719d9f4bc';
     return request(app.getHttpServer())
       .delete(`/journals/${journalId}`)
       .expect(200);

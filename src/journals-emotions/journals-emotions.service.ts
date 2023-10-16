@@ -21,9 +21,6 @@ export class JournalsEmotionsService {
     private readonly emotionRepository: Repository<Emotion>,
   ) {}
 
-  /**
-   * todo 전체적으로 쿼리 최적화 필요
-   * */
   async create(
     createJournalsEmotionDto: CreateJournalsEmotionDto,
   ): Promise<null | string> {
@@ -67,10 +64,13 @@ export class JournalsEmotionsService {
     return id;
   }
 
-  async remove(id: string): Promise<null | string> {
-    const isExist = await this.joinRepository.exist({ where: { id } });
+  async removeByJournalId(id: string): Promise<null | string> {
+    const isExist = await this.joinRepository
+      .createQueryBuilder('ej')
+      .where('ej.journal = :id', { id })
+      .getOne();
     if (!isExist) throw new NotFoundException('Not exist emotion-journal');
-    await this.joinRepository.delete(id);
+    await this.joinRepository.delete(isExist.id);
     return id;
   }
 
@@ -83,6 +83,33 @@ export class JournalsEmotionsService {
       .leftJoinAndSelect('ej.journal', 'j')
       .leftJoinAndSelect('ej.emotion', 'e')
       .where('j.id = :id', { id })
+      .getOne();
+
+    if (!journalsEmotion)
+      throw new NotFoundException('Not Exist Journal-Emotion');
+
+    return {
+      id: journalsEmotion.id,
+      emotionId: journalsEmotion.emotion.id,
+      journalId: journalsEmotion.journal.id,
+      emotionName: journalsEmotion.emotion.name,
+      journalContent: journalsEmotion.journal.content,
+      journalDate: journalsEmotion.journal.date,
+      intensity: journalsEmotion.intensity,
+    };
+  }
+
+  async findOneByJournalDateWithAllContent(
+    userId: string,
+    date: Date,
+  ): Promise<null | JournalEmotionDto> {
+    // 사용하지 않는 컬럼 SELECT (X)
+    const journalsEmotion = await this.joinRepository
+      .createQueryBuilder('ej')
+      .leftJoinAndSelect('ej.journal', 'j')
+      .leftJoinAndSelect('ej.emotion', 'e')
+      .where('j.user = :userId', { userId })
+      .andWhere('j.date = :date', { date })
       .getOne();
 
     if (!journalsEmotion)

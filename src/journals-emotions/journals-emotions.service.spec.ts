@@ -205,11 +205,13 @@ describe('JournalsEmotionsService', () => {
 
   describe('delete emotion-journal', () => {
     it('등록된 일기-감정을 삭제할 수 있습니다', () => {
-      expect(service.remove('mockjs-124')).resolves.toEqual('mockjs-124');
+      expect(service.removeByJournalId('mockjs-123')).resolves.toEqual(
+        'mockjs-123',
+      );
     });
 
     it('등록되지 않은 id로 일기-감정을 삭제할 수 없습니다', () => {
-      expect(service.remove('notexistej')).rejects.toThrowError();
+      expect(service.removeByJournalId('notexistej')).rejects.toThrowError();
     });
   });
 

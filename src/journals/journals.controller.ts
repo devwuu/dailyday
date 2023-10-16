@@ -33,11 +33,6 @@ export class JournalsController {
     return this.journalsService.findAll(user.id);
   }
 
-  @Get(':date')
-  findOneByDate(@User() user: UserDto, @Param('date') date: Date) {
-    return this.journalsService.findOneByDate(user.id, date);
-  }
-
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateJournalDto: UpdateJournalDto) {
     return this.journalsService.update(id, updateJournalDto);
@@ -47,10 +42,4 @@ export class JournalsController {
   remove(@Param('id') id: string) {
     return this.journalsService.remove(id);
   }
-
-  // 삭제 고려
-  // @Get(':id')
-  // findOneById(@Param('id') id: string) {
-  //   return this.journalsService.findOneById(id);
-  // }
 }
