@@ -8,7 +8,6 @@ import { UpdateJournalsEmotionDto } from './dto/update-journals-emotion.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JournalsEmotion } from './entities/journals-emotion.entity';
 import { Repository } from 'typeorm';
-import { Journal } from '../journals/entities/journal.entity';
 import { Emotion } from '../emotions/entities/emotion.entity';
 import { JournalEmotionDto } from './dto/journal-emotion.dto';
 
@@ -17,9 +16,6 @@ export class JournalsEmotionsService {
   constructor(
     @InjectRepository(JournalsEmotion)
     private readonly joinRepository: Repository<JournalsEmotion>,
-
-    @InjectRepository(Journal)
-    private readonly journalRepository: Repository<Journal>,
 
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
@@ -31,24 +27,17 @@ export class JournalsEmotionsService {
   async create(
     createJournalsEmotionDto: CreateJournalsEmotionDto,
   ): Promise<null | string> {
-    const { emotionId, journalId, intensity } = createJournalsEmotionDto;
+    const { emotionId, journal, intensity } = createJournalsEmotionDto;
     const emotion = await this.emotionRepository.findOneBy({
       id: emotionId,
     });
-    const journal = await this.journalRepository.findOneBy({
-      id: journalId,
-    });
 
-    if (!emotion || !journal)
-      throw new NotFoundException('Not exist Emotion OR Journal');
+    if (!emotion) throw new NotFoundException('Not exist Emotion OR Journal');
 
-    // journal을 전체 비교해서 확인함. querybuilder로 대체 필요
-    //SELECT 1 AS "row_exists" FROM (SELECT 1 AS dummy_column) "dummy_table" WHERE EXISTS (SELECT 1 FROM "JOURNAL_EMOTION" "JournalsEmotion" LEFT JOIN "JOURNAL" "JournalsEmotion__JournalsEmotion_journal" ON "JournalsEmotion__JournalsEmotion_journal"."id"="JournalsEmotion"."journal_id" AND ("JournalsEmotion__JournalsEmotion_journal"."deletedAt" IS NULL) WHERE ( ("JournalsEmotion__JournalsEmotion_journal"."id" = $1 AND "JournalsEmotion__JournalsEmotion_journal"."createdAt" = $2 AND "JournalsEmotion__JournalsEmotion_journal"."updatedAt" = $3 AND "JournalsEmotion__JournalsEmotion_journal"."date" = $4 AND "JournalsEmotion__JournalsEmotion_journal"."content" = $5) ) AND ( "JournalsEmotion"."deletedAt" IS NULL )) LIMIT 1 -- PARAMETERS: ["6c937349-8508-41f1-8e5c-3253e7fa1676","2023-10-13T01:28:34.951Z","2023-10-13T01:28:34.951Z","2023-10-15T15:00:00.000Z","새로운 일기"]
-    const isJoinedRowExist = await this.joinRepository.exist({
-      where: {
-        journal,
-      },
-    });
+    const isJoinedRowExist = await this.joinRepository
+      .createQueryBuilder('j')
+      .where('j.journal = :id', { id: journal.id })
+      .getExists();
 
     if (isJoinedRowExist)
       throw new BadRequestException('emotion is already registered');

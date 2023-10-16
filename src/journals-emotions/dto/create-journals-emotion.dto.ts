@@ -3,7 +3,7 @@ import { JournalsEmotion } from '../entities/journals-emotion.entity';
 
 export class CreateJournalsEmotionDto extends PickType(JournalsEmotion, [
   'intensity',
+  'journal',
 ]) {
-  journalId: string;
   emotionId: string;
 }

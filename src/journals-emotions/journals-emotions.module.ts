@@ -4,14 +4,9 @@ import { JournalsEmotionsController } from './journals-emotions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JournalsEmotion } from './entities/journals-emotion.entity';
 import { EmotionsModule } from '../emotions/emotions.module';
-import { JournalsModule } from '../journals/journals.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([JournalsEmotion]),
-    EmotionsModule,
-    JournalsModule,
-  ],
+  imports: [TypeOrmModule.forFeature([JournalsEmotion]), EmotionsModule],
   controllers: [JournalsEmotionsController],
   providers: [JournalsEmotionsService],
 })

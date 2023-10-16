@@ -5,6 +5,7 @@ import { Journal } from './entities/journal.entity';
 import { CreateJournalDto } from './dto/create-journal.dto';
 import { User } from '../users/entities/user.entity';
 import { UpdateJournalDto } from './dto/update-journal.dto';
+import { JournalsEmotionsService } from '../journals-emotions/journals-emotions.service';
 
 const mockuser = [
   {
@@ -53,7 +54,9 @@ class MockJournalRepository {
   });
   exist = jest
     .fn()
-    .mockImplementation((c) => mockJournals.find((j) => j.id === c.where.id));
+    .mockImplementation((c) =>
+      mockJournals.find((j) => +j.date === +c.where.date),
+    );
   softDelete = jest.fn().mockImplementation((id) => {
     mockJournals.forEach((j, index) => {
       if (j.id === id) mockJournals.splice(index, 1);
@@ -88,6 +91,10 @@ class MockJournalRepository {
   });
 }
 
+class MockJoinService {
+  create = jest.fn().mockResolvedValue('mockej-123');
+}
+
 describe('JournalsService', () => {
   let service: JournalsService;
 
@@ -100,6 +107,10 @@ describe('JournalsService', () => {
           useClass: MockJournalRepository,
         },
         { provide: getRepositoryToken(User), useClass: MockUserRepository },
+        {
+          provide: JournalsEmotionsService,
+          useClass: MockJoinService,
+        },
       ],
     }).compile();
 
@@ -113,6 +124,8 @@ describe('JournalsService', () => {
   describe('create journal', () => {
     it('새로운 일기를 등록합니다', () => {
       const journal: CreateJournalDto = {
+        emotionId: '',
+        intensity: '10',
         content: '새로운 일기',
         date: new Date(Date.now()),
       };
@@ -121,6 +134,8 @@ describe('JournalsService', () => {
 
     it('중복된 날짜로 일기를 등록할 수 없습니다', () => {
       const journal: CreateJournalDto = {
+        emotionId: '',
+        intensity: '10',
         content: '시간이 중복된 일기',
         date: new Date(2023, 9, 13),
       };
@@ -129,6 +144,8 @@ describe('JournalsService', () => {
 
     it('등록되지 않은 유저로 일기를 등록할 수 없습니다', () => {
       const journal: CreateJournalDto = {
+        emotionId: '',
+        intensity: '10',
         content: '존재하지 않는 유저',
         date: new Date(2023, 9, 13),
       };

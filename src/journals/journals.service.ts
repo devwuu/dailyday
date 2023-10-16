@@ -11,6 +11,7 @@ import { Journal } from './entities/journal.entity';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { JournalDto } from './dto/journal.dto';
+import { JournalsEmotionsService } from '../journals-emotions/journals-emotions.service';
 
 @Injectable()
 export class JournalsService {
@@ -19,28 +20,34 @@ export class JournalsService {
     private readonly journalRepository: Repository<Journal>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly joinService: JournalsEmotionsService,
   ) {}
 
-  /**
-   * todo journal-emotion 테이블에서 emotion 등록 필요
-   * */
   async create(
     userId: string,
     createJournalDto: CreateJournalDto,
   ): Promise<null | string> {
+    const { intensity, emotionId } = createJournalDto;
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new UnauthorizedException('Not exist user');
-    const journal = await this.journalRepository.exist({
+    const isExist = await this.journalRepository.exist({
       where: {
         date: createJournalDto.date,
       },
     });
-    if (journal) throw new BadRequestException('Journal is already exist');
-    const saved = await this.journalRepository.save({
+    if (isExist) throw new BadRequestException('Journal is already exist');
+    const journal = await this.journalRepository.save({
       ...createJournalDto,
       user,
     });
-    return saved.id;
+
+    const joinId = await this.joinService.create({
+      intensity,
+      emotionId,
+      journal,
+    });
+
+    return joinId;
   }
 
   async findAll(userId: string): Promise<null | JournalDto[]> {
