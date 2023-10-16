@@ -77,11 +77,19 @@ export class JournalsEmotionsService {
   async findOneByJournalIdWithAllContent(
     id: string,
   ): Promise<null | JournalEmotionDto> {
-    // 사용하지 않는 컬럼 SELECT (X)
     const journalsEmotion = await this.joinRepository
       .createQueryBuilder('ej')
       .leftJoinAndSelect('ej.journal', 'j')
       .leftJoinAndSelect('ej.emotion', 'e')
+      .select([
+        'ej.id',
+        'e.id',
+        'j.id',
+        'e.name',
+        'j.content',
+        'j.date',
+        'ej.intensity',
+      ])
       .where('j.id = :id', { id })
       .getOne();
 
@@ -108,6 +116,15 @@ export class JournalsEmotionsService {
       .createQueryBuilder('ej')
       .leftJoinAndSelect('ej.journal', 'j')
       .leftJoinAndSelect('ej.emotion', 'e')
+      .select([
+        'ej.id',
+        'e.id',
+        'j.id',
+        'e.name',
+        'j.content',
+        'j.date',
+        'ej.intensity',
+      ])
       .where('j.user = :userId', { userId })
       .andWhere('j.date = :date', { date })
       .getOne();
