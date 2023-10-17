@@ -3,11 +3,17 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { Journal } from '../../journals/entities/journal.entity';
 import { Emotion } from '../../emotions/entities/emotion.entity';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({
   name: 'JOURNAL_EMOTION',
 })
 export class JournalsEmotion extends CommonEntity {
+  @ApiProperty({
+    required: true,
+    description: '감정 강도',
+    example: '10',
+  })
   @IsString()
   @IsNotEmpty()
   @Column({
@@ -15,6 +21,10 @@ export class JournalsEmotion extends CommonEntity {
   })
   intensity: string; // 감정 강도
 
+  @ApiProperty({
+    required: true,
+    description: '등록된 일기',
+  })
   @OneToOne(() => Journal, (journal: Journal) => journal.id, {
     cascade: true,
     onDelete: 'SET NULL',
@@ -25,6 +35,10 @@ export class JournalsEmotion extends CommonEntity {
   })
   journal: Journal;
 
+  @ApiProperty({
+    required: true,
+    description: '등록된 감정',
+  })
   @ManyToOne(() => Emotion, (emotion: Emotion) => emotion.id, {
     cascade: true,
     onDelete: 'SET NULL',

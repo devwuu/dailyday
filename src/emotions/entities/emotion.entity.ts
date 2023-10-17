@@ -33,7 +33,7 @@ export class Emotion extends CommonEntity {
   etc?: string;
 
   @ApiProperty({
-    description: '감정을 등록한 user id',
+    description: '감정을 등록한 user',
     example: '94f3c50c-05e7-4b83-b311-1fb4cf84b3a1',
     required: true,
   })
