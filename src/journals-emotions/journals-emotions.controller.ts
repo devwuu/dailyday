@@ -27,6 +27,7 @@ export class JournalsEmotionsController {
   ) {}
 
   @ApiOperation({
+    tags: ['일기-감정'],
     summary: '일기와 감정 상세 조회',
     description: '일기와 일기에 등록된 감정 내용을 일기 id로 조회합니다',
   })
@@ -41,6 +42,7 @@ export class JournalsEmotionsController {
   }
 
   @ApiOperation({
+    tags: ['일기-감정'],
     summary: '일기와 감정 상세 조회',
     description: '일기와 일기에 등록된 감정 내용을 일기 날짜로 조회합니다',
   })

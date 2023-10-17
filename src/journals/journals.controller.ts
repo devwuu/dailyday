@@ -36,6 +36,7 @@ export class JournalsController {
   constructor(private readonly journalsService: JournalsService) {}
 
   @ApiOperation({
+    tags: ['일기'],
     summary: '일기 등록',
   })
   @ApiResponse({
@@ -64,6 +65,7 @@ export class JournalsController {
   }
 
   @ApiOperation({
+    tags: ['일기'],
     summary: '등록된 일기 리스트 조회',
   })
   @ApiResponse({
@@ -78,6 +80,7 @@ export class JournalsController {
   }
 
   @ApiOperation({
+    tags: ['일기'],
     summary: '등록된 일기 수정',
   })
   @ApiResponse({
@@ -108,6 +111,7 @@ export class JournalsController {
   }
 
   @ApiOperation({
+    tags: ['일기'],
     summary: '등록된 일기 삭제',
   })
   @ApiResponse({

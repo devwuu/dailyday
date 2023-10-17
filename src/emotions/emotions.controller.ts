@@ -39,6 +39,7 @@ export class EmotionsController {
   constructor(private readonly emotionsService: EmotionsService) {}
 
   @ApiOperation({
+    tags: ['감정'],
     summary: '감정 등록',
   })
   @ApiResponse({
@@ -67,6 +68,7 @@ export class EmotionsController {
   }
 
   @ApiOperation({
+    tags: ['감정'],
     summary: '등록된 감정 조회',
   })
   @ApiResponse({
@@ -80,6 +82,7 @@ export class EmotionsController {
   }
 
   @ApiOperation({
+    tags: ['감정'],
     summary: '감정 상세 조회',
   })
   @ApiResponse({
@@ -97,6 +100,7 @@ export class EmotionsController {
   }
 
   @ApiOperation({
+    tags: ['감정'],
     summary: '등록된 감정 수정',
   })
   @ApiResponse({
@@ -126,6 +130,7 @@ export class EmotionsController {
   }
 
   @ApiOperation({
+    tags: ['감정'],
     summary: '등록된 감정 삭제',
   })
   @ApiResponse({

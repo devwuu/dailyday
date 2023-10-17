@@ -8,7 +8,7 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOperation({ summary: '회원 로그인' })
+  @ApiOperation({ tags: ['회원'], summary: '회원 로그인' })
   @ApiResponse({
     status: 200,
     description: '로그인 성공',

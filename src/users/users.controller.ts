@@ -25,6 +25,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiOperation({
+    tags: ['회원'],
     summary: '회원가입',
   })
   @ApiResponse({
@@ -52,6 +53,7 @@ export class UsersController {
     required: true,
   })
   @ApiOperation({
+    tags: ['회원'],
     summary: '회원정보 조회',
   })
   @ApiResponse({
@@ -71,6 +73,7 @@ export class UsersController {
     required: true,
   })
   @ApiOperation({
+    tags: ['회원'],
     summary: '비밀번호 변경',
   })
   @ApiResponse({
@@ -106,6 +109,7 @@ export class UsersController {
     required: true,
   })
   @ApiOperation({
+    tags: ['회원'],
     summary: '회원탈퇴',
   })
   @ApiResponse({
@@ -134,6 +138,7 @@ export class UsersController {
     required: true,
   })
   @ApiOperation({
+    tags: ['회원'],
     summary: '회원정보 수정',
   })
   @ApiResponse({
