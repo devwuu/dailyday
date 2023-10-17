@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Logger, Post } from '@nestjs/common';
 import { LoginRequestDto } from './dto/login.request.dto';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -24,6 +24,7 @@ export class AuthController {
     },
   })
   @Post('login')
+  @HttpCode(200)
   async login(@Body() loginRequestDto: LoginRequestDto) {
     const token = await this.authService.login(loginRequestDto);
     return { token };

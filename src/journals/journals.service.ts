@@ -27,17 +27,19 @@ export class JournalsService {
     userId: string,
     createJournalDto: CreateJournalDto,
   ): Promise<null | string> {
-    const { intensity, emotionId } = createJournalDto;
+    const { intensity, emotionId, content, date } = createJournalDto;
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new UnauthorizedException('Not exist user');
-    const isExist = await this.journalRepository.exist({
-      where: {
-        date: createJournalDto.date,
-      },
-    });
+    const isExist = await this.journalRepository
+      .createQueryBuilder('j')
+      .leftJoin('j.user', 'u')
+      .where('u.id = :userId', { userId })
+      .andWhere('j.date = :date', { date: createJournalDto.date })
+      .getExists();
     if (isExist) throw new BadRequestException('Journal is already exist');
     const journal = await this.journalRepository.save({
-      ...createJournalDto,
+      content,
+      date,
       user,
     });
 

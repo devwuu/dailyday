@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CommonEntity } from '../../common/entities/common.entity';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -17,7 +17,7 @@ export class Emotion extends CommonEntity {
     nullable: false,
   })
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   name: string;
 
   @ApiProperty({

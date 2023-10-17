@@ -26,7 +26,6 @@ export class JournalsEmotion extends CommonEntity {
     description: '등록된 일기',
   })
   @OneToOne(() => Journal, (journal: Journal) => journal.id, {
-    cascade: true,
     onDelete: 'SET NULL',
   })
   @JoinColumn({
@@ -40,7 +39,6 @@ export class JournalsEmotion extends CommonEntity {
     description: '등록된 감정',
   })
   @ManyToOne(() => Emotion, (emotion: Emotion) => emotion.id, {
-    cascade: true,
     onDelete: 'SET NULL',
   })
   @JoinColumn({

@@ -32,7 +32,7 @@ export class User extends CommonEntity {
     description: '비밀번호',
     required: true,
   })
-  @Exclude()
+  @Exclude({ toPlainOnly: true }) // JSON으로 parsing 될 때만 제거
   @IsNotEmpty()
   @Column({ nullable: false })
   password: string;
