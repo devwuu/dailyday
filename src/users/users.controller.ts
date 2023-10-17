@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { User } from '../common/decorators/user.decorator';
 import { UserDto } from './dto/user.dto';
 import { OnlyPrivateInterceptor } from '../common/interceptors/only-private.interceptor';
-import { ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -47,11 +47,7 @@ export class UsersController {
     return { userId };
   }
 
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'jwt token',
-    required: true,
-  })
+  @ApiBearerAuth()
   @ApiOperation({
     tags: ['회원'],
     summary: '회원정보 조회',
@@ -67,11 +63,7 @@ export class UsersController {
     return user;
   }
 
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'jwt token',
-    required: true,
-  })
+  @ApiBearerAuth()
   @ApiOperation({
     tags: ['회원'],
     summary: '비밀번호 변경',
@@ -103,11 +95,7 @@ export class UsersController {
     return { userId };
   }
 
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'jwt token',
-    required: true,
-  })
+  @ApiBearerAuth()
   @ApiOperation({
     tags: ['회원'],
     summary: '회원탈퇴',
@@ -132,11 +120,7 @@ export class UsersController {
     return this.usersService.remove(user.id);
   }
 
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'jwt token',
-    required: true,
-  })
+  @ApiBearerAuth()
   @ApiOperation({
     tags: ['회원'],
     summary: '회원정보 수정',

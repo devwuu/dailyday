@@ -17,18 +17,14 @@ import { OnlyPrivateInterceptor } from '../common/interceptors/only-private.inte
 import { UserDto } from '../users/dto/user.dto';
 import { User } from '../common/decorators/user.decorator';
 import {
-  ApiHeader,
+  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
 import { JournalDto } from './dto/journal.dto';
 
-@ApiHeader({
-  name: 'Authorization',
-  description: 'jwt token',
-  required: true,
-})
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(OnlyPrivateInterceptor)
 @Controller('journals')

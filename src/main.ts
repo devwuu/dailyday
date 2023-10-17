@@ -23,6 +23,11 @@ class Application {
       .setTitle('Daily day')
       .setDescription('Daily day API description')
       .setVersion('1.0')
+      .addBearerAuth({
+        type: 'http',
+        bearerFormat: 'JWT',
+        scheme: 'bearer',
+      })
       .build();
     const document = SwaggerModule.createDocument(this.server, config);
     SwaggerModule.setup('docs', this.server, document);

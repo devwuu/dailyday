@@ -18,18 +18,14 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { User } from '../common/decorators/user.decorator';
 import { UserDto } from '../users/dto/user.dto';
 import {
-  ApiHeader,
+  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
 import { EmotionDto } from './dto/emotion.dto';
 
-@ApiHeader({
-  name: 'Authorization',
-  description: 'jwt token',
-  required: true,
-})
+@ApiBearerAuth()
 @Controller('emotions')
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(OnlyPrivateInterceptor)
