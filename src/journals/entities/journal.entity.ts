@@ -16,7 +16,6 @@ export class Journal extends CommonEntity {
   @IsDateString()
   @IsNotEmpty()
   @Column({
-    unique: false, // typeorm issue로 인한 unique false 처리 :https://github.com/typeorm/typeorm/issues/7736
     nullable: false,
     type: 'timestamp with time zone',
   })
