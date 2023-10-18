@@ -101,8 +101,8 @@ export class JournalsService {
   async remove(id: string): Promise<null | string> {
     const isExist = await this.journalRepository.exist({ where: { id } });
     if (!isExist) throw new NotFoundException('Not exist journal');
-    await this.journalRepository.softDelete(id);
     await this.joinService.removeByJournalId(id);
+    await this.journalRepository.delete(id);
     return id;
   }
 }
