@@ -16,7 +16,14 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { User } from '../common/decorators/user.decorator';
 import { UserDto } from './dto/user.dto';
 import { OnlyPrivateInterceptor } from '../common/interceptors/only-private.interceptor';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExtraModels,
+  ApiOperation,
+  ApiResponse,
+  getSchemaPath,
+} from '@nestjs/swagger';
+import { ApiCommonResponse } from '../common/decorators/api-common-response.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -52,9 +59,9 @@ export class UsersController {
     tags: ['회원'],
     summary: '회원정보 조회',
   })
-  @ApiResponse({
-    status: 200,
-    type: UserDto,
+  @ApiExtraModels(UserDto)
+  @ApiCommonResponse({
+    $ref: getSchemaPath(UserDto),
   })
   @UseInterceptors(OnlyPrivateInterceptor)
   @UseGuards(JwtAuthGuard)

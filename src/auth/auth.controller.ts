@@ -11,10 +11,12 @@ export class AuthController {
 
   @ApiOperation({ tags: ['회원'], summary: '회원 로그인' })
   @ApiCommonResponse({
-    token: {
-      type: 'string',
-      example:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NGYzYzUwYy0wNWU3LTRiODMtYjMxMS0xZmI0Y2Y4NGIzYTEiLCJpYXQiOjE2OTc0MzY1MzMxMTIsImV4cCI6MTY5NzQzNjUzNDkxMn0.kx4R0gbHj9fZNKRpCO0t5SCAlBw_P7rrKuEdyyXk-Pg"',
+    properties: {
+      token: {
+        type: 'string',
+        example:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NGYzYzUwYy0wNWU3LTRiODMtYjMxMS0xZmI0Y2Y4NGIzYTEiLCJpYXQiOjE2OTc0MzY1MzMxMTIsImV4cCI6MTY5NzQzNjUzNDkxMn0.kx4R0gbHj9fZNKRpCO0t5SCAlBw_P7rrKuEdyyXk-Pg"',
+      },
     },
   })
   @Post('login')
